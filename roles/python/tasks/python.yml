@@ -58,28 +58,6 @@
     chdir: "{{ python3_src_dir }}/Python-{{ python3_version }}"
   when: not python3_stat.stat.exists
 
-- name: backup old python3 and pip3 if exist
-  shell: |
-    mv /usr/bin/python3 /usr/bin/python3_old || true
-    mv /usr/bin/pip3 /usr/bin/pip3_old || true
-  when: not python3_stat.stat.exists
-
-- name: create symlink for python3
-  file:
-    src: "{{ python3_prefix }}/bin/python3"
-    dest: /usr/bin/python3
-    state: link
-    force: yes
-  when: not python3_stat.stat.exists
-
-- name: create symlink for pip3
-  file:
-    src: "{{ python3_prefix }}/bin/pip3"
-    dest: /usr/bin/pip3
-    state: link
-    force: yes
-  when: not python3_stat.stat.exists
-
 - name: configure pip to use aliyun mirror
   copy:
     dest: "~/.pip/pip.conf"
@@ -89,10 +67,6 @@
 
       [install]
       trusted-host = mirrors.aliyun.com
-  when: not python3_stat.stat.exists
-
-- name: upgrade pip
-  command: python3 -m pip install --upgrade pip
   when: not python3_stat.stat.exists
 
 - name: update ld.so.conf

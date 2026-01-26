@@ -1,13 +1,13 @@
-src_dir: "/usr/local/src"
-
 openssl_version: "1.1.1q"
-openssl_prefix: "{{ src_dir }}/openssl/{{ openssl_version }}"  # 安装路径
+openssl_src_dir: "/usr/loca/src"
+openssl_prefix: "{{ openssl_src_dir }}/openssl/{{ openssl_version }}"  # 安装路径
 openssl_tarball: "openssl-{{ openssl_version }}.tar.gz"
 openssl_url: "https://www.openssl.org/source/{{ openssl_tarball }}"
 openssl_state: "present"
 
 python3_version: "3.11.8"
-python3_prefix: "{{ src_dir}}/python/{{ python3_version }}"     # 安装路径
+python3_src_dir: "/usr/local/src"
+python3_prefix: "{{ python3_src_dir }}/python/{{ python3_version }}"     # 安装路径
 python3_tarball: "Python-{{ python3_version }}.tgz"
 python3_url: "https://www.python.org/ftp/python/{{ python3_version }}/{{ python3_tarball }}"
 python3_state: "present"

@@ -10,7 +10,7 @@
 
 - name: create src dir
   file:
-    path: "{{ openssl_src_dir }}"
+    path: "{{ openssl_openssl_src_dir }}"
     state: directory
   when: not openssl_stat.stat.exists
 
@@ -45,4 +45,15 @@
   command: make install
   args:
     chdir: "{{ openssl_src_dir }}/openssl-{{ openssl_version }}"
+  when: not openssl_stat.stat.exists
+
+- name: update ld.so.conf
+  lineinfile:
+    path: /etc/ld.so.conf
+    line: "{{ openssl_prefix }}/lib"
+    create: yes
+  when: not openssl_stat.stat.exists
+
+- name: reload ldconfig
+  command: ldconfig
   when: not openssl_stat.stat.exists

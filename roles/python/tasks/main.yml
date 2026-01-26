@@ -1,2 +1,6 @@
 - import_tasks: remove.yml
   when: python3_state == "absent"
+- import_tasks: openssl.yml
+  when: openssl_state == "present"
+- import_tasks: python.yml
+  when: python3_state == "present"
