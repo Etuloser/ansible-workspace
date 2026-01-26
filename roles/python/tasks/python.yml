@@ -1,0 +1,107 @@
+- name: check if python3 already installed
+  stat:
+    path: "{{ python3_prefix }}/bin/python3"
+  register: python3_stat
+
+- name: skip python3 installation if exists
+  debug:
+    msg: "Python {{ python3_version }} already installed at {{ python3_prefix }}"
+  when: python3_stat.stat.exists
+
+- name: install python build dependencies (Debian)
+  apt:
+    name: "{{ build_deps_debian }}"
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian" and not python3_stat.stat.exists
+
+- name: install python build dependencies (RedHat)
+  yum:
+    name: "{{ build_deps_redhat }}"
+    state: present
+  when: ansible_os_family == "RedHat" and not python3_stat.stat.exists
+
+- name: download Python3 tarball if missing
+  get_url:
+    url: "{{ python3_url }}"
+    dest: "{{ python3_src_dir }}/{{ python3_tarball }}"
+    mode: '0644'
+  when: not python3_stat.stat.exists and not lookup('file', '{{ python3_src_dir }}/{{ python3_tarball }}', errors='ignore')
+
+- name: extract Python3
+  unarchive:
+    src: "{{ python3_src_dir }}/{{ python3_tarball }}"
+    dest: "{{ python3_src_dir }}"
+    remote_src: yes
+  when: not python3_stat.stat.exists
+
+- name: configure Python3 with OpenSSL
+  command: >
+    ./configure
+    --prefix={{ python3_prefix }}
+    --with-openssl={{ openssl_prefix }}
+    --enable-shared
+  args:
+    chdir: "{{ python3_src_dir }}/Python-{{ python3_version }}"
+    creates: "{{ python3_prefix }}/bin/python3"
+  when: not python3_stat.stat.exists
+
+- name: build Python3
+  command: make -j "{{ ansible_processor_vcpus | default(2) }}"
+  args:
+    chdir: "{{ python3_src_dir }}/Python-{{ python3_version }}"
+  when: not python3_stat.stat.exists
+
+- name: install Python3
+  command: make install
+  args:
+    chdir: "{{ python3_src_dir }}/Python-{{ python3_version }}"
+  when: not python3_stat.stat.exists
+
+- name: backup old python3 and pip3 if exist
+  shell: |
+    mv /usr/bin/python3 /usr/bin/python3_old || true
+    mv /usr/bin/pip3 /usr/bin/pip3_old || true
+  when: not python3_stat.stat.exists
+
+- name: create symlink for python3
+  file:
+    src: "{{ python3_prefix }}/bin/python3"
+    dest: /usr/bin/python3
+    state: link
+    force: yes
+  when: not python3_stat.stat.exists
+
+- name: create symlink for pip3
+  file:
+    src: "{{ python3_prefix }}/bin/pip3"
+    dest: /usr/bin/pip3
+    state: link
+    force: yes
+  when: not python3_stat.stat.exists
+
+- name: configure pip to use aliyun mirror
+  copy:
+    dest: "~/.pip/pip.conf"
+    content: |
+      [global]
+      index-url = https://mirrors.aliyun.com/pypi/simple/
+
+      [install]
+      trusted-host = mirrors.aliyun.com
+  when: not python3_stat.stat.exists
+
+- name: upgrade pip
+  command: python3 -m pip install --upgrade pip
+  when: not python3_stat.stat.exists
+
+- name: update ld.so.conf
+  lineinfile:
+    path: /etc/ld.so.conf
+    line: "{{ python3_prefix }}/lib"
+    create: yes
+  when: not python3_stat.stat.exists
+
+- name: reload ldconfig
+  command: ldconfig
+  when: not python3_stat.stat.exists

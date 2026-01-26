@@ -1,0 +1,44 @@
+src_dir: "/usr/local/src"
+
+openssl_version: "1.1.1q"
+openssl_prefix: "{{ src_dir }}/openssl/{{ openssl_version }}"  # 安装路径
+openssl_tarball: "openssl-{{ openssl_version }}.tar.gz"
+openssl_url: "https://www.openssl.org/source/{{ openssl_tarball }}"
+openssl_state: "present"
+
+python3_version: "3.11.8"
+python3_prefix: "{{ src_dir}}/python/{{ python3_version }}"     # 安装路径
+python3_tarball: "Python-{{ python3_version }}.tgz"
+python3_url: "https://www.python.org/ftp/python/{{ python3_version }}/{{ python3_tarball }}"
+python3_state: "present"
+
+build_deps_debian:
+  - build-essential
+  - wget
+  - curl
+  - libffi-dev
+  - bzip2
+  - bzip2-dev
+  - zlib1g-dev
+  - ncurses-dev
+  - gdbm-dev
+  - sqlite3
+  - libsqlite3-dev
+  - readline-dev
+  - uuid-dev
+  - xz-utils
+build_deps_redhat:
+  - gcc
+  - gcc-c++
+  - make
+  - wget
+  - curl
+  - libffi-devel
+  - bzip2-devel
+  - zlib-devel
+  - ncurses-devel
+  - gdbm-devel
+  - sqlite-devel
+  - readline-devel
+  - libuuid-devel
+  - xz-devel

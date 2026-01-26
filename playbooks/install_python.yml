@@ -1,0 +1,9 @@
+- hosts: all
+  become: true
+  roles:
+    - role: python311
+      vars:
+        openssl_prefix: "/usr/local/src/openssl/1.1.1q"
+        python3_prefix: "/usr/local/src/python/3.11.8"
+        openssl_src_dir: "/usr/local/src"
+        python3_src_dir: "/usr/local/src"

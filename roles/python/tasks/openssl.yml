@@ -1,0 +1,48 @@
+- name: check if openssl already installed
+  stat:
+    path: "{{ openssl_prefix }}/bin/openssl"
+  register: openssl_stat
+
+- name: skip openssl installation if exists
+  debug:
+    msg: "OpenSSL {{ openssl_version }} already installed at {{ openssl_prefix }}"
+  when: openssl_stat.stat.exists
+
+- name: create src dir
+  file:
+    path: "{{ openssl_src_dir }}"
+    state: directory
+  when: not openssl_stat.stat.exists
+
+- name: download openssl tarball if missing
+  get_url:
+    url: "{{ openssl_url }}"
+    dest: "{{ openssl_src_dir }}/{{ openssl_tarball }}"
+    mode: '0644'
+  when: not openssl_stat.stat.exists and not lookup('file', '{{ openssl_src_dir }}/{{ openssl_tarball }}', errors='ignore')
+
+- name: extract openssl
+  unarchive:
+    src: "{{ openssl_src_dir }}/{{ openssl_tarball }}"
+    dest: "{{ openssl_src_dir }}"
+    remote_src: yes
+  when: not openssl_stat.stat.exists
+
+- name: configure openssl
+  command: ./config --prefix={{ openssl_prefix }} shared
+  args:
+    chdir: "{{ openssl_src_dir }}/openssl-{{ openssl_version }}"
+    creates: "{{ openssl_prefix }}/bin/openssl"
+  when: not openssl_stat.stat.exists
+
+- name: build openssl
+  command: make -j "{{ ansible_processor_vcpus | default(2) }}"
+  args:
+    chdir: "{{ openssl_src_dir }}/openssl-{{ openssl_version }}"
+  when: not openssl_stat.stat.exists
+
+- name: install openssl
+  command: make install
+  args:
+    chdir: "{{ openssl_src_dir }}/openssl-{{ openssl_version }}"
+  when: not openssl_stat.stat.exists

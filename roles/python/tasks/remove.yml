@@ -1,0 +1,13 @@
+- name: Cleanup System
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ openssl_src_dir }}/{{ openssl_tarball }}"
+    - "{{ python3_src_dir }}/{{ python3_tarball }}"
+    - "{{ python3_src_dir }}/openssl"
+    - "{{ python3_src_dir }}/python"
+    - "{{ python3_src_dir }}/{{ openssl_version }}"
+    - "{{ python3_src_dir}}/{{python3_version}}"
+    - "{{ python3_src_dir}}/openssl-{{ openssl_version }}"
+    - "{{ python3_src_dir}}/Python-{{ python3_version }}"

@@ -1,0 +1,6 @@
+- hosts: all
+  become: true
+  roles:
+    - role: python
+      vars:
+        python3_state: absent
