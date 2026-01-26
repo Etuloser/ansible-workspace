@@ -10,7 +10,7 @@
 
 - name: create src dir
   file:
-    path: "{{ openssl_openssl_src_dir }}"
+    path: "{{ openssl_src_dir }}"
     state: directory
   when: not openssl_stat.stat.exists
 

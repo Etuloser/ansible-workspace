@@ -1,5 +1,5 @@
 openssl_version: "1.1.1q"
-openssl_src_dir: "/usr/loca/src"
+openssl_src_dir: "/usr/local/src"
 openssl_prefix: "{{ openssl_src_dir }}/openssl/{{ openssl_version }}"  # 安装路径
 openssl_tarball: "openssl-{{ openssl_version }}.tar.gz"
 openssl_url: "https://www.openssl.org/source/{{ openssl_tarball }}"
