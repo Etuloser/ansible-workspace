@@ -9,3 +9,6 @@
 
 - import_tasks: install.yml
   when: docker_state == "present"
+
+- import_tasks: configure.yml
+  when: docker_state == "present"

@@ -20,7 +20,14 @@ docker_packages:
   - docker-compose-plugin
 
 # gpg key and repository information
-
 docker_gpg_url: "https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg"
 docker_apt_keyring: "/etc/apt/keyrings/docker.asc"
+docker_apt_repo_uri: "https://mirrors.aliyun.com/docker-ce/linux/ubuntu"
 docker_apt_repo: "deb [arch={{ ansible_architecture }} signed-by={{ docker_apt_keyring }}] https://mirrors.aliyun.com/docker-ce/linux/ubuntu {{ ansible_lsb.codename }} stable"
+
+# docker registry mirrors
+docker_registry_mirrors:
+  - "https://mirror.baidubce.com"
+  - "https://docker.m.daocloud.io"
+  - "https://reg-mirror.qiniu.com"
+  - "https://hub-mirror.c.163.com"

@@ -20,8 +20,8 @@
 
 - name: download docker gpg key
   get_url:
-    url: https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg
-    dest: /etc/apt/keyrings/docker.asc
+    url: "{{ docker_gpg_url }}"
+    dest: "{{ docker_apt_keyring }}"
     mode: 'a+r'
 
 - name: get ubuntu codename
@@ -34,10 +34,10 @@
   copy:
     content: |
       Types: deb
-      URIs: https://mirrors.aliyun.com/docker-ce/linux/ubuntu
+      URIs: {{ docker_apt_repo_uri }}
       Suites: {{ ubuntu_codename.stdout }}
       Components: stable
-      Signed-By: /etc/apt/keyrings/docker.asc
+      Signed-By: {{ docker_apt_keyring }}
     dest: /etc/apt/sources.list.d/docker.sources
     mode: '0644'
   register: docker_repo

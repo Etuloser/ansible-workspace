@@ -1,0 +1,34 @@
+---
+# Configure docker daemon and start service
+
+- name: create /etc/docker directory
+  file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+
+- name: configure docker daemon with registry mirrors
+  copy:
+    content: |
+      {
+        "registry-mirrors": [
+          "https://mirror.baidubce.com",
+          "https://docker.m.daocloud.io",
+          "https://reg-mirror.qiniu.com",
+          "https://hub-mirror.c.163.com"
+        ]
+      }
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  register: daemon_config
+
+- name: reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  when: daemon_config.changed
+
+- name: start docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
