@@ -1,0 +1,11 @@
+---
+# Main entrypoint for docker role
+
+- import_tasks: remove.yml
+  when: docker_state == "absent"
+
+- import_tasks: repo.yml
+  when: docker_state == "present"
+
+- import_tasks: install.yml
+  when: docker_state == "present"

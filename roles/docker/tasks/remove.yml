@@ -1,0 +1,15 @@
+---
+# Remove old docker packages
+
+- name: get installed old docker packages
+  shell: |
+    dpkg --get-selections 2>/dev/null | grep -E 'docker\.io|docker-compose|docker-doc|podman-docker|containerd|runc' | cut -f1 || true
+  register: old_packages
+  changed_when: false
+
+- name: remove old docker packages
+  apt:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ old_packages.stdout_lines }}"
+  when: old_packages.stdout_lines | length > 0

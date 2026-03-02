@@ -1,0 +1,26 @@
+---
+# default variables for docker role
+
+docker_state: "present"         # set to absent to remove docker packages
+
+docker_old_packages:
+  - docker.io
+  - docker-compose
+  - docker-compose-v2
+  - docker-doc
+  - podman-docker
+  - containerd
+  - runc
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+# gpg key and repository information
+
+docker_gpg_url: "https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg"
+docker_apt_keyring: "/etc/apt/keyrings/docker.asc"
+docker_apt_repo: "deb [arch={{ ansible_architecture }} signed-by={{ docker_apt_keyring }}] https://mirrors.aliyun.com/docker-ce/linux/ubuntu {{ ansible_lsb.codename }} stable"
