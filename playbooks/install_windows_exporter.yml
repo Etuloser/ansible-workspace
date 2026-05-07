@@ -1,0 +1,11 @@
+---
+- name: Deploy windows_exporter to Windows hosts
+  hosts: windows
+  gather_facts: no
+
+  roles:
+    - role: windows_exporter
+      vars:
+        collectors: "cpu,logical_disk,net,os,system,service"
+        firewall_port: 9182
+        msi_file: "windows_exporter-0.31.6-amd64.msi"   # 如果本地已有 MSI

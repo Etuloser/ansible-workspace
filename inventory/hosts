@@ -1,3 +1,17 @@
 [all]
 [local]
 localhost ansible_connection=local
+
+[windows]
+192.168.104.85 ansible_user=Administrator
+192.168.104.86 ansible_user=Administrator
+192.168.104.87 ansible_user=Administrator
+192.168.104.88 ansible_user=MSI
+192.168.104.89 ansible_user=MSI
+192.168.104.90 ansible_user=MSI
+
+
+[windows:vars]
+ansible_connection=ssh
+ansible_shell_type=powershell
+ansible_ssh_extra_args='-o StrictHostKeyChecking=no'

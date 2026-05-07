@@ -1,0 +1,19 @@
+---
+# MSI 下载 URL，如果本地 MSI 不存在，则自动下载
+msi_url: "https://github.com/prometheus-community/windows_exporter/releases/download/v0.31.6/windows_exporter-0.31.6-amd64.msi"
+
+# 本地 role 下的 MSI 文件名（放在 files/ 下）
+msi_file: "windows_exporter-0.31.6-amd64.msi"
+
+# Windows 上的临时路径
+msi_dest: "C:\\Temp\\windows_exporter.msi"
+
+# collectors 配置
+collectors: "cpu,logical_disk,net,os,system"
+
+# 防火墙端口
+firewall_port: 9182
+firewall_rule_name: "Windows Exporter 9182"
+
+# 是否覆盖已安装版本
+force_install: false

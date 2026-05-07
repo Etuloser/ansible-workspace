@@ -1,0 +1,46 @@
+---
+- name: Ensure temp folder exists
+  win_file:
+    path: C:\Temp
+    state: directory
+
+- name: Check if MSI exists on remote
+  win_stat:
+    path: "{{ msi_dest }}"
+  register: msi_stat
+
+- name: Copy local MSI if exists and remote missing or force_install
+  win_copy:
+    src: "{{ msi_file }}"
+    dest: "{{ msi_dest }}"
+    force: "{{ force_install }}"
+  when: msi_file is defined
+  register: copy_result
+
+- name: Download MSI if remote missing and no local MSI
+  win_get_url:
+    url: "{{ msi_url }}"
+    dest: "{{ msi_dest }}"
+    force: "{{ force_install }}"
+  when: msi_file is not defined or not msi_stat.stat.exists
+
+- name: Install windows_exporter MSI silently
+  win_package:
+    path: "{{ msi_dest }}"
+    arguments: 'ENABLE_COLLECTORS="{{ collectors }}" /qn'
+    state: present
+
+- name: Ensure windows_exporter service is started and automatic
+  win_service:
+    name: windows_exporter
+    start_mode: auto
+    state: started
+
+- name: Allow firewall for windows_exporter port
+  win_firewall_rule:
+    name: "{{ firewall_rule_name }}"
+    enable: yes
+    direction: in
+    localport: "{{ firewall_port }}"
+    protocol: TCP
+    action: allow
